@@ -497,7 +497,7 @@ if submitted:
             st.error("Ocurrió un problema al guardar tu registro. Intenta nuevamente o contáctanos.")
             st.exception(e)
 
-                    # Generar PDF de ficha técnica
+        # Generar PDF de ficha técnica
         st.markdown("#### Ficha técnica de inscripción")
         pdf_bytes = None
         file_name = f"ficha_inscripcion_{nombre.strip().replace(' ', '_')}.pdf"
