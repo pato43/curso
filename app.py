@@ -94,18 +94,16 @@ with col1:
     )
 
 with col2:
-    # Logos alineados a la derecha, sin espacio en blanco extra
-    st.markdown(
-        """
-        <div class="brand-logos">
-            <img src="assets/tessena_logo.png" alt="Tessena" />
-            <img src="assets/microsoft_logo.png" alt="Microsoft" />
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    # Logos alineados a la derecha (sin HTML, usando st.image)
+    s, tlogo, mlogo = st.columns([0.6, 0.2, 0.2])  # 's' es un espacio a la izquierda
+    with tlogo:
+        st.image("assets/tessena_logo.png", use_column_width=False, width=120)
+    with mlogo:
+        st.image("assets/microsoft_logo.png", use_column_width=False, width=120)
 
-    # KPIs en cuadrícula 2×2 (más ordenados y compactos)
+    st.write("")  # pequeño separador
+
+    # KPIs en cuadrícula 2×2
     k1a, k1b = st.columns(2)
     with k1a:
         st.markdown('<div class="kpi"><h4>Duración</h4><p>4 meses</p></div>', unsafe_allow_html=True)
@@ -117,8 +115,6 @@ with col2:
         st.markdown('<div class="kpi"><h4>Horario</h4><p>Mar–Mié–Jue<br>10:00–11:00 CDMX</p></div>', unsafe_allow_html=True)
     with k2b:
         st.markdown('<div class="kpi"><h4>Inicio</h4><p>19 Ago 2025</p></div>', unsafe_allow_html=True)
-
-st.markdown('<div class="hr"></div>', unsafe_allow_html=True)
 
 
 # ─────────────────────────────
