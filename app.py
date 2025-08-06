@@ -497,10 +497,18 @@ if submitted:
             st.error("Ocurrió un problema al guardar tu registro. Intenta nuevamente o contáctanos.")
             st.exception(e)
 
-        # Generar PDF de ficha técnica
+        # Generar PDF de ficha técnica (persistente con session_state)
         st.markdown("#### Ficha técnica de inscripción")
-        pdf_bytes = None
-        file_name = f"ficha_inscripcion_{nombre.strip().replace(' ', '_')}.pdf"
+
+        # Inicializa contenedores en session_state
+        if "ficha_pdf_bytes" not in st.session_state:
+            st.session_state["ficha_pdf_bytes"] = None
+        if "ficha_pdf_name" not in st.session_state:
+            st.session_state["ficha_pdf_name"] = None
+        if "ficha_wa_link" not in st.session_state:
+            st.session_state["ficha_wa_link"] = None
+
+        # Solo regenerar el PDF justo al enviar el formulario
         try:
             from io import BytesIO
             from reportlab.lib.pagesizes import LETTER
@@ -573,25 +581,45 @@ if submitted:
 
             c.showPage()
             c.save()
+
+            # Guardar en session_state para persistir tras el re-run
             pdf_bytes = buffer.getvalue()
             buffer.close()
-        except Exception as e:
-            st.warning("No se pudo generar el PDF. Asegúrate de tener instalada la librería `reportlab` (pip install reportlab).")
-            st.exception(e)
 
+            # Nombre de archivo seguro
+            safe_name = "".join(ch if ch.isalnum() or ch in ("_", "-", ".") else "_" for ch in nombre.strip().replace(" ", "_"))
+            file_name = f"ficha_inscripcion_{safe_name}.pdf"
 
-            # Enlace de WhatsApp con mensaje prellenado (el alumno adjuntará el PDF manualmente en WhatsApp)
+            st.session_state["ficha_pdf_bytes"] = pdf_bytes
+            st.session_state["ficha_pdf_name"] = file_name
+
+            # Link de WhatsApp con mensaje prellenado (el alumno adjuntará el PDF manualmente)
             from urllib.parse import quote
             msg = (
-                f"Hola, adjunto mi ficha técnica de inscripción.\n"
-                f"Nombre: {row['nombre']}\n"
-                f"Correo: {row['email']}\n"
-                f"WhatsApp: {row['telefono_whatsapp']}\n"
-                f"Código de recibo Clip: {row['clip_recibo']}\n"
+                f"Hola, adjunto mi ficha técnica de inscripción.%0A"
+                f"Nombre: {row['nombre']}%0A"
+                f"Correo: {row['email']}%0A"
+                f"WhatsApp: {row['telefono_whatsapp']}%0A"
+                f"Código de recibo Clip: {row['clip_recibo']}%0A"
                 f"Cohorte: Inicio 19/08/2025, Mar–Mié–Jue 10:00–11:00 (CDMX)."
             )
-            wa_link = f"https://wa.me/527225597963?text={quote(msg)}"
-            st.markdown(f"[Enviar ficha técnica por WhatsApp]({wa_link})")
-            st.caption("Abre WhatsApp y **adjunta el PDF descargado** en el chat antes de enviar.")
+            wa_link = f"https://wa.me/527225597963?text={msg}"
+            st.session_state["ficha_wa_link"] = wa_link
+
+        except Exception as e:
+            st.warning("No se pudo generar el PDF. ¿Está instalada la librería `reportlab`? (agrega `reportlab` a requirements.txt y despliega de nuevo).")
+            st.exception(e)
+
+        # Mostrar descarga y WhatsApp si ya existen en session_state
+        if st.session_state["ficha_pdf_bytes"] and st.session_state["ficha_pdf_name"]:
+            st.download_button(
+                label="Descargar ficha técnica (PDF)",
+                data=st.session_state["ficha_pdf_bytes"],
+                file_name=st.session_state["ficha_pdf_name"],
+                mime="application/pdf",
+            )
+            if st.session_state["ficha_wa_link"]:
+                st.markdown(f"[Enviar ficha técnica por WhatsApp]({st.session_state['ficha_wa_link']})")
+                st.caption("Abre WhatsApp y **adjunta el PDF descargado** en el chat antes de enviar.")
         else:
-            st.info("Cuando la generación de PDF esté disponible, podrás descargar la ficha y enviarla por WhatsApp.")
+            st.info("Generaremos tu PDF al enviar el formulario o al corregir cualquier error de guardado.")
