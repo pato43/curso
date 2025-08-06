@@ -56,22 +56,30 @@ footer { visibility: hidden; }
 """, unsafe_allow_html=True)
 
 # ─────────────────────────────
-# Barra superior con logos (rutas editables por ti)
+# Encabezado compacto con logos integrados + Hero
+# (reemplaza la barra superior con logos y el hero anteriores)
 # ─────────────────────────────
-top_l, top_r = st.columns([3, 1])
-with top_l:
-    st.markdown("")  # Espacio intencional
-with top_r:
-    st.markdown('<div class="logo-row">', unsafe_allow_html=True)
-    st.image("assets/tessena_logo.png", caption=None, width=110)
-    st.image("assets/microsoft_logo.png", caption=None, width=110)
-    st.markdown('</div>', unsafe_allow_html=True)
 
-# ─────────────────────────────
-# Encabezado / Hero
-# ─────────────────────────────
-col1, col2 = st.columns([1.3, 1])
+# Estilos para logos alineados y sin huecos
+st.markdown("""
+<style>
+.brand-logos{
+  display:flex; align-items:center; justify-content:flex-end; gap:12px; margin-bottom:12px;
+}
+.brand-logos img{
+  height:34px; width:auto; display:block;
+}
+@media (min-width: 900px){
+  .brand-logos img{ height:38px; }
+}
+</style>
+""", unsafe_allow_html=True)
+
+# Hero con dos columnas: texto a la izquierda, logos + KPIs a la derecha
+col1, col2 = st.columns([1.35, 1], gap="large")
+
 with col1:
+    st.markdown("### ")  # micro-espacio
     st.markdown("# Programa Integral de **Análisis y Ciencia de Datos**")
     st.markdown(
         "Domina el ciclo completo: **Google Sheets → SQL (SQLite) → Python (pandas/numpy) → "
@@ -84,16 +92,34 @@ with col1:
         '<span class="badge">Certificación Microsoft en alianza con Tessena</span>',
         unsafe_allow_html=True
     )
+
 with col2:
-    c1, c2 = st.columns(2)
-    with c1:
+    # Logos alineados a la derecha, sin espacio en blanco extra
+    st.markdown(
+        """
+        <div class="brand-logos">
+            <img src="assets/tessena_logo.png" alt="Tessena" />
+            <img src="assets/microsoft_logo.png" alt="Microsoft" />
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    # KPIs en cuadrícula 2×2 (más ordenados y compactos)
+    k1a, k1b = st.columns(2)
+    with k1a:
         st.markdown('<div class="kpi"><h4>Duración</h4><p>4 meses</p></div>', unsafe_allow_html=True)
+    with k1b:
         st.markdown('<div class="kpi"><h4>Ritmo</h4><p>3 clases/sem</p></div>', unsafe_allow_html=True)
-    with c2:
+
+    k2a, k2b = st.columns(2)
+    with k2a:
         st.markdown('<div class="kpi"><h4>Horario</h4><p>Mar–Mié–Jue<br>10:00–11:00 CDMX</p></div>', unsafe_allow_html=True)
+    with k2b:
         st.markdown('<div class="kpi"><h4>Inicio</h4><p>19 Ago 2025</p></div>', unsafe_allow_html=True)
 
 st.markdown('<div class="hr"></div>', unsafe_allow_html=True)
+
 
 # ─────────────────────────────
 # Propuesta de valor & Certificación
