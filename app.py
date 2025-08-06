@@ -497,7 +497,7 @@ if submitted:
             st.error("Ocurrió un problema al guardar tu registro. Intenta nuevamente o contáctanos.")
             st.exception(e)
 
-        # Generar PDF de ficha técnica
+                    # Generar PDF de ficha técnica
         st.markdown("#### Ficha técnica de inscripción")
         pdf_bytes = None
         file_name = f"ficha_inscripcion_{nombre.strip().replace(' ', '_')}.pdf"
@@ -511,28 +511,27 @@ if submitted:
             c = canvas.Canvas(buffer, pagesize=LETTER)
             width, height = LETTER
             x_margin = 0.85 * inch
-            y = height - 0.9 * inch
+            y = {"val": height - 0.9 * inch}  # contenedor mutable
 
             def line(txt, dy=16, bold=False):
-                nonlocal y
                 if bold:
                     c.setFont("Helvetica-Bold", 11)
                 else:
                     c.setFont("Helvetica", 10.5)
-                c.drawString(x_margin, y, txt)
-                y -= dy
+                c.drawString(x_margin, y["val"], txt)
+                y["val"] -= dy
 
             # Encabezado
             c.setFont("Helvetica-Bold", 14)
-            c.drawString(x_margin, y, "Ficha técnica de inscripción — Programa de Análisis y Ciencia de Datos")
-            y -= 24
+            c.drawString(x_margin, y["val"], "Ficha técnica de inscripción — Programa de Análisis y Ciencia de Datos")
+            y["val"] -= 24
             c.setFont("Helvetica", 10.5)
             line(f"Fecha de registro: {now_iso}")
             line("Certificación: Microsoft en alianza con Tessena")
             line("Cohorte: inicio 19/08/2025 • Horario: Mar–Mié–Jue 10:00–11:00 (CDMX)")
-            y -= 6
-            c.line(x_margin, y, width - x_margin, y)
-            y -= 16
+            y["val"] -= 6
+            c.line(x_margin, y["val"], width - x_margin, y["val"])
+            y["val"] -= 16
 
             # Datos personales
             line("Datos del participante", bold=True)
@@ -544,9 +543,9 @@ if submitted:
             line(f"Edad: {row['edad']}")
             if row['condicion']:
                 line(f"Condición reportada: {row['condicion']}")
-            y -= 6
-            c.line(x_margin, y, width - x_margin, y)
-            y -= 16
+            y["val"] -= 6
+            c.line(x_margin, y["val"], width - x_margin, y["val"])
+            y["val"] -= 16
 
             # Origen
             line("Origen / Cómo se enteró", bold=True)
@@ -555,18 +554,18 @@ if submitted:
                 line(f"Detalle: {row['medio_detalle']}")
             if row['creador_cuenta']:
                 line(f"Creador/cuenta: {row['creador_cuenta']}")
-            y -= 6
-            c.line(x_margin, y, width - x_margin, y)
-            y -= 16
+            y["val"] -= 6
+            c.line(x_margin, y["val"], width - x_margin, y["val"])
+            y["val"] -= 16
 
             # Pago
             line("Pago", bold=True)
             line(f"Código de recibo Clip: {row['clip_recibo']}")
-            line(f"Plan: Programa de 4 meses")
+            line("Plan: Programa de 4 meses")
             line(f"Monto estimado total: ${int(row['monto_total_mxn']):,} MXN".replace(",", ","))
-            y -= 6
-            c.line(x_margin, y, width - x_margin, y)
-            y -= 16
+            y["val"] -= 6
+            c.line(x_margin, y["val"], width - x_margin, y["val"])
+            y["val"] -= 16
 
             # Aviso
             line("Aviso de privacidad (resumen)", bold=True)
@@ -580,13 +579,6 @@ if submitted:
             st.warning("No se pudo generar el PDF. Asegúrate de tener instalada la librería `reportlab` (pip install reportlab).")
             st.exception(e)
 
-        if pdf_bytes:
-            st.download_button(
-                label="Descargar ficha técnica (PDF)",
-                data=pdf_bytes,
-                file_name=file_name,
-                mime="application/pdf",
-            )
 
             # Enlace de WhatsApp con mensaje prellenado (el alumno adjuntará el PDF manualmente en WhatsApp)
             from urllib.parse import quote
