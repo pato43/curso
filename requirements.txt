@@ -6,5 +6,5 @@ plotly
 scikit-learn
 statsmodels
 gspread
-altair
-seaborn
+google-auth
+reportlab
