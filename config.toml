@@ -1,0 +1,12 @@
+# .streamlit/config.toml
+
+[theme]
+base = "light"                          # Fuerza tema claro (ignora el modo oscuro del dispositivo)
+primaryColor = "#2563EB"                # Azul acento
+backgroundColor = "#FFFFFF"             # Fondo principal
+secondaryBackgroundColor = "#F5F7FB"    # Tarjetas/blocks
+textColor = "#0F172A"                   # Texto principal
+font = "sans serif"
+
+[client]
+toolbarMode = "minimal"                 # UI más limpia (oculta elementos de edición innecesarios)
