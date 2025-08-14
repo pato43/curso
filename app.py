@@ -216,7 +216,7 @@ with k3:
 st.markdown("**Métodos aceptados:**")
 st.markdown('<div class="pay"><span>Tarjeta crédito</span><span>Tarjeta débito</span><span>PayPal</span><span>Depósito bancario</span><span>Transferencia</span></div>', unsafe_allow_html=True)
 
-st.info("**Promo paquete 4 meses:** paga por adelantado y obtén **$1,000 MXN de descuento** (total **$5,000 MXN**). Válido hasta **11 Ago 2025**.")
+st.info("**Promo paquete 4 meses:** paga por adelantado y obtén **$1,000 MXN de descuento** (total **$5,000 MXN**). Válido hasta **17 Ago 2025**.")
 
 # Botones Clip (HTML proporcionado)
 cbtn1, cbtn2 = st.columns([1, 1])
@@ -229,11 +229,13 @@ with cbtn1:
         unsafe_allow_html=True
     )
 with cbtn2:
-    st.markdown("**Pagar 4 meses (MXN $5,000) — Descuento hasta 11 Ago 2025**")
+    st.markdown("**Pagar 4 meses (MXN $5,000) — Descuento hasta 17 Ago 2025**")
     st.markdown(
-        '<a href="https://pago.clip.mx/16d060d6-9824-407b-a7dd-6ebe39deae4a" target="_blank">'
-        '<img src="https://cdn.prod.website-files.com/62588b32d8d6105ab7aa9721/63bf568610f3fdf437235192_Preview.svg" alt="Paga con Clip" />'
-        '</a>',
+        """
+        <a href="https://pago.clip.mx/91475443-2068-4972-a23f-18fe61a5fb57" target="_blank" rel="noopener noreferrer">
+            <img src="https://assets-global.website-files.com/62588b32d8d6105ab7aa9721/63bf568610f3fdf437235192_Preview.svg" alt="Logo Paga con Clip" />
+        </a>
+        """,
         unsafe_allow_html=True
     )
 
