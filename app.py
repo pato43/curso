@@ -33,10 +33,18 @@ TOTAL_PROMO = TOTAL_4M - 1000  # 6000 - 1000 = 5000
 CLIP_1M_URL = "https://pago.clip.mx/6005bd8a-84e5-408a-a366-0160d023a3cf"
 CLIP_4M_URL = "https://pago.clip.mx/91475443-2068-4972-a23f-18fe61a5fb57"  # NUEVO
 
-ORG_WA = "527225597963"  # Cambia si usas otro número oficial para recepción
+# Contacto (puedes sobrescribir con st.secrets)
+ORG_WA = st.secrets.get("support_whatsapp", "527225597963")
+SUPPORT_EMAIL = st.secrets.get("support_email", "rojasalexander10@gmail.com")
+
+# Política (modifica libremente este texto corto)
+REFUND_POLICY = (
+    "Reembolsos solicitados **antes del inicio** del curso: 100% menos comisiones de pasarela. "
+    "Una vez iniciada la cohorte, evaluamos **casos excepcionales** (salud, fuerza mayor)."
+)
 
 # ─────────────────────────────
-# Estilos (tema claro + imágenes nítidas)
+# Estilos (fondo claro + imágenes nítidas)
 # ─────────────────────────────
 st.markdown("""
 <style>
@@ -78,6 +86,10 @@ p { line-height: 1.6; }
 .brand-logos{ display:flex; align-items:center; justify-content:flex-end; gap:12px; margin-bottom:12px; }
 img, svg { max-width: 100%; height:auto; image-rendering:-webkit-optimize-contrast; image-rendering:crisp-edges; }
 
+/* Tarjeta de soporte */
+.support { display:flex; gap:16px; flex-wrap:wrap; align-items:center; }
+.support .card { border:1px solid var(--line); border-radius:14px; padding:1rem 1.2rem; background:var(--bg-soft); }
+
 /* Ocultar footer Streamlit */
 footer { visibility: hidden; }
 </style>
@@ -117,7 +129,6 @@ with left:
         pass
 
 with right:
-    # Logos (usa rutas locales con buena resolución; SVG/PNG recomendados)
     l1, l2 = st.columns(2)
     with l1:
         st.image("assets/tessena_logo.png", caption="Tessena", use_container_width=True)
@@ -140,9 +151,9 @@ with right:
 st.markdown('<div class="hr"></div>', unsafe_allow_html=True)
 
 # ─────────────────────────────
-# Tabs principales
+# Tabs principales (incluye FAQ + Soporte)
 # ─────────────────────────────
-tab1, tab2, tab3, tab4 = st.tabs(["Resumen", "Plan de estudios", "Precios y pago", "Inscripción"])
+tab1, tab2, tab3, tab4, tab5 = st.tabs(["Resumen", "Plan de estudios", "Precios y pago", "Inscripción", "FAQ y Soporte"])
 
 with tab1:
     cL, cR = st.columns([1, 1])
@@ -272,7 +283,7 @@ with tab3:
         )
 
 with tab4:
-    # ───────── Stepper visual ─────────
+    # Stepper visual
     st.subheader("Inscripción")
     st.markdown("""
 <div class="stepper">
@@ -318,9 +329,9 @@ with tab4:
 
     st.markdown('<div class="hr"></div>', unsafe_allow_html=True)
 
-    # ───────── Formulario sin almacenamiento (solo PDF) ─────────
+    # Formulario sin almacenamiento (solo PDF)
     st.markdown("### Paso 2 — Completa tus datos")
-    st.caption("Tus datos se usan únicamente para preparar tu ficha y comunicación del curso. No guardamos información en bases de datos.")
+    st.caption("Tus datos se usan únicamente para tu ficha y comunicación del curso. **No guardamos** información en bases de datos.")
 
     with st.form("form_inscripcion_pdf"):
         ci1, ci2 = st.columns(2)
@@ -342,7 +353,7 @@ with tab4:
             medio_detalle = st.text_input("Especifica el medio (canal, universidad, empresa, etc.) (opcional)")
             condicion = st.text_area("¿Alguna condición que debamos conocer? (opcional)", placeholder="Alergias, accesibilidad, etc.")
             clip_recibo = st.text_input("Número/código de recibo Clip *", help="Lo recibes por correo y aparece en pantalla al procesar el pago.")
-        acepta = st.checkbox("Confirmo que la información es correcta y acepto ser contactado por organización del curso *")
+        acepta = st.checkbox("Confirmo que la información es correcta y acepto ser contactado por la organización del curso *")
         submitted = st.form_submit_button("Generar ficha técnica (PDF)")
 
     if submitted:
@@ -387,6 +398,7 @@ with tab4:
                 c.setFont("Helvetica", 10.5)
                 line(f"Fecha de registro: {now_iso}")
                 line("Certificación: Microsoft en alianza con Tessena")
+                line("Herramientas: 100% libres y gratuitas • Requisitos: no necesitas una PC potente")
                 line(f"Cohorte: inicio {START_DATE_STR_LONG} • Horario: {HORARIO_STR}")
                 y["val"] -= 6
                 c.line(x_margin, y["val"], width - x_margin, y["val"])
@@ -421,7 +433,7 @@ with tab4:
 
                 # Aviso
                 line("Aviso de privacidad (resumen)", bold=True)
-                line("Tus datos se utilizan exclusivamente para gestionar tu lugar y comunicación del curso.")
+                line("Tus datos se utilizan exclusivamente para gestionar tu lugar y la comunicación del curso.")
 
                 c.showPage()
                 c.save()
@@ -437,7 +449,6 @@ with tab4:
                 st.download_button("Descargar ficha técnica (PDF)", data=pdf_bytes, file_name=file_name, mime="application/pdf")
 
                 # Link de WhatsApp con mensaje prellenado (el alumno adjuntará el PDF manualmente)
-                from urllib.parse import quote
                 msg = (
                     f"Hola, adjunto mi ficha técnica de inscripción.%0A"
                     f"Nombre: {nombre}%0A"
@@ -453,6 +464,37 @@ with tab4:
             except Exception as e:
                 st.error("No se pudo generar el PDF. Asegúrate de instalar `reportlab` (agrega `reportlab` a requirements.txt).")
                 st.exception(e)
+
+with tab5:
+    st.subheader("Preguntas frecuentes (FAQ)")
+    with st.expander("¿Realmente no necesito una PC potente?"):
+        st.markdown("Correcto. Trabajamos con **herramientas ligeras y gratuitas**: Google Sheets, SQLite, Python 3.11+, Jupyter/Colab y Streamlit. Un equipo promedio funciona bien.")
+    with st.expander("¿Las herramientas son libres y gratuitas?"):
+        st.markdown("Sí. Usamos **software libre o gratuito**. No hay suscripciones obligatorias de pago.")
+    with st.expander("¿Cómo recibo la certificación de Microsoft en alianza con Tessena?"):
+        st.markdown("Al **aprobar el Proyecto Final**, emitimos un certificado con **folio verificable** que puedes añadir a **LinkedIn** y a tu portafolio.")
+    with st.expander("¿Qué pasa si falto a una clase?"):
+        st.markdown("Tendrás **grabaciones** y materiales para ponerte al día. También hay **espacios de dudas**.")
+    with st.expander("¿Puedo pedir factura?"):
+        st.markdown("Sí. Tras tu pago, responde al correo de confirmación con tus **datos fiscales** y el **recibo de Clip**.")
+    with st.expander("¿Hay reembolsos?"):
+        st.markdown(REFUND_POLICY)
+    with st.expander("¿Cómo accedo a las clases (Jitsi)?"):
+        st.markdown("Enviaremos el **enlace de Jitsi** y el calendario por correo **24 horas antes** del inicio.")
+    with st.expander("¿El cupo es limitado?"):
+        st.markdown("Sí, mantenemos grupos **pequeños** para dar atención personalizada.")
+    with st.expander("¿Qué software instalo?"):
+        st.markdown("- **Python 3.11+**, **Jupyter/Colab**, **Streamlit**, **DBeaver** (para SQLite). Todo gratuito.\n- Extras: Git, VS Code (opcional).")
+
+    st.markdown('<div class="hr"></div>', unsafe_allow_html=True)
+    st.subheader("Soporte")
+    st.markdown("""
+<div class="support">
+  <div class="card"><b>WhatsApp:</b> <a href="https://wa.me/""" + ORG_WA + """" target="_blank" rel="noopener">+""" + ORG_WA + """</a></div>
+  <div class="card"><b>Correo:</b> <a href="mailto:""" + SUPPORT_EMAIL + """?subject=Duda%20curso%20Datos">""" + SUPPORT_EMAIL + """</a></div>
+  <div class="card"><b>Horario de atención:</b> Lun–Vie 10:00–18:00 (CDMX)</div>
+</div>
+""", unsafe_allow_html=True)
 
 st.markdown('<div class="hr"></div>', unsafe_allow_html=True)
 st.caption("© 2025 • Programa de Análisis y Ciencia de Datos • Microsoft + Tessena • Herramientas libres y gratuitas • No requieres una PC potente")
