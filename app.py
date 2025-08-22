@@ -31,7 +31,7 @@ TOTAL_4M = MENSUALIDAD * 4
 TOTAL_PROMO = TOTAL_4M - 1000  # 6000 - 1000 = 5000
 
 CLIP_1M_URL = "https://pago.clip.mx/5cc981d4-e635-41ee-a424-26cf28a17946"
-CLIP_4M_URL = "https://pago.clip.mx/5cc981d4-e635-41ee-a424-26cf28a17946"  # mismo enlace (actual)
+CLIP_4M_URL = "https://pago.clip.mx/v3/5eccbd81-2c8f-4601-94d7-1adc9f7625ce"  # mismo enlace (actual)
 
 # Contacto (puedes sobrescribir con st.secrets)
 ORG_WA = st.secrets.get("support_whatsapp", "527225597963")
